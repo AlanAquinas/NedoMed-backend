@@ -13,7 +13,20 @@ class Command(BaseCommand):
         fake = Faker()
 
         # Create admin user
-        admin = User.objects.create_user(username='admin', email='admin@example.com', password='admin', first_name='Admin', last_name='User', user_type='admin')
+        # admin = User.objects.create_user(username='admin1', email='admin1@example.com', password='admin', first_name='Admin', last_name='User', user_type='admin')
+
+        # Create doctors
+        for _ in range(5):
+            doctor = Doctor.objects.create(
+                user=User.objects.create_user(username=fake.user_name(), email=fake.email(), password='password',
+                                              first_name=fake.first_name(), last_name=fake.last_name(),
+                                              user_type='doctor'),
+                specialization=fake.job(),
+                qualifications=fake.text(),
+                experience_years=random.randint(1, 30),
+                license_number=fake.uuid4(),
+                room=random.choice(['101', '102', '103', '104', '105'])
+            )
 
         # Create patients
         for _ in range(10):
@@ -25,16 +38,7 @@ class Command(BaseCommand):
                 phone=fake.phone_number()
             )
 
-        # Create doctors
-        for _ in range(5):
-            doctor = Doctor.objects.create(
-                user=User.objects.create_user(username=fake.user_name(), email=fake.email(), password='password', first_name=fake.first_name(), last_name=fake.last_name(), user_type='doctor'),
-                specialization=fake.job(),
-                qualifications=fake.text(),
-                experience_years=random.randint(1, 30),
-                license_number=fake.uuid4(),
-                room=random.choice(['101', '102', '103', '104', '105'])
-            )
+
 
         # Create medical histories
         patients = Patient.objects.all()
