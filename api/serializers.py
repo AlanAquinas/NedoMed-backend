@@ -5,6 +5,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+        extra_kwargs = {
+            'doctor': {'required': False},
+            'patient': {'required': False}
+        }
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:

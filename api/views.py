@@ -5,7 +5,7 @@ from .models import Patient, Doctor, Appointment, User
 from .serializers import (
     UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer
 )
-from rest_framework import generics, permissions, status, serializers
+from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
