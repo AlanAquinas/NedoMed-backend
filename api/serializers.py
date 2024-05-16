@@ -5,10 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-        extra_kwargs = {
-            'doctor': {'required': False},
-            'patient': {'required': False}
-        }
+
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +33,17 @@ class MedicationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
+
+class AppointmentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['doctor_id', 'patient_id', 'appointment_date', 'start_time', 'reason']
+
+
+class AppointmentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'

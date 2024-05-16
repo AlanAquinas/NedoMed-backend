@@ -3,7 +3,8 @@ from rest_framework_simplejwt.settings import api_settings
 
 from .models import Patient, Doctor, Appointment, User, AppointmentListSerializer
 from .serializers import (
-    UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer
+    UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, AppointmentCreateSerializer,
+    AppointmentDetailSerializer
 )
 from rest_framework import generics, status, serializers
 from rest_framework.response import Response
@@ -58,8 +59,13 @@ class UserAppointmentListView(generics.ListAPIView):
         user = self.request.user
         return Appointment.objects.filter(patient__user=user)
 
+class AppointmentDetailView(generics.RetrieveAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentDetailSerializer
+    lookup_field = 'id'
+
 class ScheduleAppointmentView(generics.CreateAPIView):
-    serializer_class = AppointmentSerializer
+    serializer_class = AppointmentListSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -87,6 +93,9 @@ class ScheduleAppointmentView(generics.CreateAPIView):
             doctor=doctor,
             start_time=start_datetime.time(),
             end_time=end_datetime.time(),
-            room_number=1,
             is_accepted=False,
         )
+
+
+class AppointmentCreateView(generics.CreateAPIView):
+    serializer_class = AppointmentCreateSerializer
