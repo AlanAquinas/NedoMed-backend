@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Permission, Group
+from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -90,3 +91,10 @@ class Appointment(models.Model):
     is_accepted = models.BooleanField(default=False)
     notes = models.TextField(blank=True, null=True)
 
+class AppointmentListSerializer(serializers.ModelSerializer):
+    patient_id = serializers.PrimaryKeyRelatedField(source='patient_id.user_id', read_only=True)
+    doctor_id = serializers.PrimaryKeyRelatedField(source='doctor_id.user_id', read_only=True)
+
+    class Meta:
+        model = Appointment
+        fields = ['id', 'patient_id', 'doctor_id', 'appointment_date', 'start_time', 'end_time', 'reason', 'is_accepted', 'notes']

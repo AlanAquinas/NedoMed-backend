@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.settings import api_settings
 
-from .models import Patient, Doctor, Appointment, User
+from .models import Patient, Doctor, Appointment, User, AppointmentListSerializer
 from .serializers import (
-    UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer
+    UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, AppointmentCreateSerializer,
+    AppointmentDetailSerializer
 )
 from rest_framework import generics, status, serializers
 from rest_framework.response import Response
@@ -49,13 +50,27 @@ class DoctorDataView(generics.RetrieveAPIView):
     serializer_class = DoctorSerializer
     permission_classes = [IsAuthenticated]
 
+class UserAppointmentListView(generics.ListAPIView):
+    serializer_class = AppointmentListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Retrieve appointments for the authenticated user
+        user = self.request.user
+        return Appointment.objects.filter(patient__user=user)
+
+class AppointmentDetailView(generics.RetrieveAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentDetailSerializer
+    lookup_field = 'id'
+
 class ScheduleAppointmentView(generics.CreateAPIView):
-    serializer_class = AppointmentSerializer
+    serializer_class = AppointmentListSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         doctor_id = self.kwargs.get('doctor_id')
-        doctor = get_object_or_404(Doctor, id=doctor_id)
+        doctor = get_object_or_404(Doctor, user_id=doctor_id)
 
         appointment_date = self.request.data.get('appointment_date')
         start_time = self.request.data.get('start_time')
@@ -78,6 +93,9 @@ class ScheduleAppointmentView(generics.CreateAPIView):
             doctor=doctor,
             start_time=start_datetime.time(),
             end_time=end_datetime.time(),
-            room_number=1,
             is_accepted=False,
         )
+
+
+class AppointmentCreateView(generics.CreateAPIView):
+    serializer_class = AppointmentCreateSerializer
