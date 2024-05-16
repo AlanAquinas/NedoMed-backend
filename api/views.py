@@ -1,10 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.settings import api_settings
 
-from .models import Patient, Doctor, Appointment, User, AppointmentListSerializer
+from .models import Patient, Doctor, Appointment, User, AppointmentListSerializer, Medication, AnalysisResult
 from .serializers import (
     UserSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, AppointmentCreateSerializer,
-    AppointmentDetailSerializer
+    AppointmentDetailSerializer, MedicationSerializer, AnalysisResultSerializer
 )
 from rest_framework import generics, status, serializers
 from rest_framework.response import Response
@@ -49,6 +49,29 @@ class DoctorDataView(generics.RetrieveAPIView):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
     permission_classes = [IsAuthenticated]
+
+class AllDoctorsDataView(generics.ListAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+    permission_classes = [IsAuthenticated]
+
+class UserMedicationsByIDView(generics.ListAPIView):
+    serializer_class = MedicationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('id')
+        user = get_object_or_404(User, id=user_id)
+        return Medication.objects.filter(patient__user=user)
+
+class UserAnalysisResultsByIDView(generics.ListAPIView):
+    serializer_class = AnalysisResultSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('id')
+        user = get_object_or_404(User, id=user_id)
+        return AnalysisResult.objects.filter(patient__user=user)
 
 class UserAppointmentListView(generics.ListAPIView):
     serializer_class = AppointmentListSerializer
