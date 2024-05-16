@@ -87,9 +87,8 @@ class UserAppointmentListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Retrieve appointments for the authenticated user
-        user = self.request.user
-        return Appointment.objects.filter(patient__user=user)
+        user_id = self.kwargs.get('id')
+        return Appointment.objects.filter(patient__user_id=user_id)
 
 class AppointmentDetailView(generics.RetrieveAPIView):
     queryset = Appointment.objects.all()
