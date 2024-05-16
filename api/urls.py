@@ -2,11 +2,13 @@ from django.urls import path
 from . import views
 from .views import PatientDataView, DoctorDataView, ScheduleAppointmentView, UserAppointmentListView, \
     AppointmentCreateView, AppointmentDetailView, AllDoctorsDataView, UserMedicationsByIDView, \
-    UserAnalysisResultsByIDView
+    UserAnalysisResultsByIDView, UserRetrieveAPIView
 
 urlpatterns = [
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
+
+    path('users/<int:pk>/', UserRetrieveAPIView.as_view(), name='user-detail'),
 
     path('patient/<int:pk>/', PatientDataView.as_view(), name='patient-detail'),
     path('patient/<int:id>/medications/', UserMedicationsByIDView.as_view(), name='user_medications_by_id'),
