@@ -84,9 +84,7 @@ class ScheduleAppointmentView(generics.CreateAPIView):
             raise serializers.ValidationError("Doctor is not available at this time.")
 
         existing_appointments = Appointment.objects.filter(doctor=doctor, appointment_date=appointment_date)
-        for appointment in existing_appointments:
-            if (start_datetime <= appointment.start_time < end_datetime) or (start_datetime < appointment.end_time <= end_datetime):
-                raise serializers.ValidationError("Time slot not available. Please choose another time.")
+
 
         serializer.save(
             patient=self.request.user.patient,  # Assuming user has a patient profile
